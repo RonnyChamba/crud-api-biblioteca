@@ -18,6 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
+@CrossOrigin("*")
 public class CategoryController {
 
     private static final Logger LOGGER = LogManager.getLogger(CategoryController.class);

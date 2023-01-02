@@ -19,6 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1")
 @AllArgsConstructor
+@CrossOrigin("*")
 public class BookController {
 
     private static final Logger LOGGER = LogManager.getLogger(CategoryController.class);
