@@ -1,13 +1,14 @@
 package com.ideas.org.crud.mapper;
 
-import com.ideas.org.crud.dto.BookDTO;
-import com.ideas.org.crud.dto.BookResponse;
-import com.ideas.org.crud.dto.CategoryDTO;
-import com.ideas.org.crud.dto.CategoryResponse;
+import com.ideas.org.crud.dto.*;
 import com.ideas.org.crud.entities.Book;
 import com.ideas.org.crud.entities.Category;
+import com.ideas.org.crud.entities.User;
 import com.ideas.org.crud.util.UtilFunction;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class Mapper {
@@ -78,6 +79,35 @@ public class Mapper {
 
             }
         }
+
+    }
+
+    public User mapperToEntity(UserDTO userDTO) {
+
+        User user = new User();
+        user.setUsername(userDTO.getUsername());
+        user.setPassword(userDTO.getPassword());
+        return user;
+
+    }
+
+    public UserResponse mapperToDTO(User user) {
+
+        UserResponse response = new UserResponse();
+        response.setIde(user.getIde());
+        response.setUsername(user.getUsername());
+        response.setRoles(user.getRoles().stream()
+                .map(item -> item.getRolEnun().name())
+                .collect(Collectors.toList()));
+
+        return response;
+
+    }
+
+    public List<UserResponse> mapperToDTO(List<User> user) {
+
+        return  user.stream()
+                .map(this::mapperToDTO).collect(Collectors.toList());
 
     }
 

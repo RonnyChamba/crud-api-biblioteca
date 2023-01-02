@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -48,6 +49,7 @@ public class CategoryController {
         return ResponseEntity.ok(mapData);
     }
 
+    @PreAuthorize(value = "hasRole('ROLE_ADMIN')")
     @DeleteMapping("/categories/{ide}")
     public ResponseEntity<?> delete(@PathVariable Integer ide) {
 

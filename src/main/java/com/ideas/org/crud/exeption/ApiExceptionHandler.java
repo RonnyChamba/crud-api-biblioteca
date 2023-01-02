@@ -1,6 +1,8 @@
 package com.ideas.org.crud.exeption;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,6 +27,7 @@ public class ApiExceptionHandler {
     // para que reconosca
     // agregar esto cunaod aggre secur   AuthenticationException.class
     @ExceptionHandler({UnauthorizedException.class,
+            AuthenticationException.class
           })
     @ResponseBody
     public void unauthorizedRequest() {
@@ -65,8 +68,7 @@ public class ApiExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    // AccessDeniedException.class add esto cuadno agrege security
-    @ExceptionHandler({ForbiddenException.class,  })
+    @ExceptionHandler({ForbiddenException.class, AccessDeniedException.class })
     @ResponseBody
     public ErrorMessage forbidden(Exception exception) {
         return new ErrorMessage(exception, HttpStatus.FORBIDDEN.value());
