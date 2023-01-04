@@ -1,8 +1,13 @@
 package com.ideas.org.crud.security.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ideas.org.crud.controller.CategoryController;
+import com.ideas.org.crud.exeption.ErrorMessage;
+import com.ideas.org.crud.exeption.UnauthorizedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Service;
@@ -25,6 +30,12 @@ public class JwtEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
         LOGGER.error("Error entryPoint");
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "unauthorized");
+
+        ErrorMessage errorMessage = new ErrorMessage(new UnauthorizedException("Token not valid or not authorize"), HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(errorMessage.getCode());
+        response.setContentType("application/json");
+        response.getWriter().write( new ObjectMapper().writeValueAsString(errorMessage));
+        response.getWriter().flush();
+        response.getWriter().close();
     }
 }

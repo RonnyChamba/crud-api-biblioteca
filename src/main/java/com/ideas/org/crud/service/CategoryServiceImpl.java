@@ -1,5 +1,6 @@
 package com.ideas.org.crud.service;
 
+import com.ideas.org.crud.dto.CategoryBookResponse;
 import com.ideas.org.crud.dto.CategoryDTO;
 import com.ideas.org.crud.dto.CategoryResponse;
 import com.ideas.org.crud.entities.Category;
@@ -14,6 +15,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,6 +80,46 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public CategoryDTO findByIde(Integer ide) {
+
+        try {
+
+            Category category = categoryRepository.findById(ide)
+                    .orElseThrow(() ->
+                            new NotFoundException(String.format("Category %s not exists", ide)));
+
+
+            CategoryDTO categoryDTO = new CategoryDTO();
+            categoryDTO.setIde(category.getIde());
+            categoryDTO.setName(category.getName());
+            categoryDTO.setDescription(category.getDescription());
+            return categoryDTO;
+
+        } catch (DataAccessException e) {
+
+            LOGGER.error("Error al buscar categoria por ide", e);
+            throw new NotDataAccessException("Error al ejecutar operación");
+        }
+
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategoryBookResponse> findFetchBooksAll() {
+
+        try {
+
+            return categoryMapper.mapperFetchToDTO(categoryRepository.findFetchBook());
+        } catch (DataAccessException e) {
+
+            LOGGER.error("Error al listar categorias fetch book", e);
+            throw new NotDataAccessException("Error al ejecutar operación");
+        }
+    }
+
+    @Override
     @Transactional
     public void delete(Integer ide) {
 
@@ -110,10 +152,7 @@ public class CategoryServiceImpl implements CategoryService {
                 throw new DuplicatedResourceException(String.format("Categoria con nombre %s  ya existe", categoryDTO.getName()));
             } else category.setName(categoryDTO.getName());
 
-
-            if (categoryDTO.getDescription() != null) {
-                category.setDescription(categoryDTO.getDescription());
-            }
+            category.setDescription(categoryDTO.getDescription());
 
             return categoryMapper.mapperToDTO(categoryRepository.save(category));
 

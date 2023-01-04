@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class BookServiceImpl implements BookService {
 
+
     private static final Logger LOGGER = LogManager.getLogger(BookService.class);
 
     private BookRepository bookRepository;
@@ -80,6 +81,28 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
+    public BookDTO findByIde(Integer ide) {
+
+        try {
+
+            Book bookFound = bookRepository.findById(ide)
+                    .orElseThrow(() -> new NotFoundException(
+                            String.format("Book %s not exist", ide)
+                    ));
+
+            return mapper.mapperToUpdateDTO(bookFound);
+
+        } catch (DataAccessException e) {
+
+            LOGGER.error("Error to search book", e);
+            throw new NotDataAccessException("Error al ejecutar operación");
+        }
+
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<BookResponse> findAllByCategory(Integer ide) {
 
         try {
@@ -127,10 +150,10 @@ public class BookServiceImpl implements BookService {
 
             mapper.mapperToUpdateEntity(book, bookDTO);
 
-            if (bookDTO.getCategory() !=null){
+            if (bookDTO.getCategory() != null) {
 
                 book.setCategory(categoryRepository.findById(bookDTO.getCategory()).orElseThrow(
-                        ()-> new NotFoundException(String.format("Categoria %s no existe", bookDTO.getCategory()))
+                        () -> new NotFoundException(String.format("Categoria %s no existe", bookDTO.getCategory()))
                 ));
             }
 

@@ -7,6 +7,7 @@ import com.ideas.org.crud.entities.User;
 import com.ideas.org.crud.util.UtilFunction;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,21 @@ public class Mapper {
         category.setName(categoryDTO.getName());
         category.setDescription(categoryDTO.getDescription());
         return category;
+    }
+
+    public BookDTO mapperToUpdateDTO(Book book) {
+
+        BookDTO bookDTO = new BookDTO();
+
+        bookDTO.setIde(book.getIde());
+        bookDTO.setTitle(book.getTitle());
+        bookDTO.setDescription(book.getDescription());
+        bookDTO.setIsbn(book.getIsbn());
+        bookDTO.setPublicationDate(UtilFunction.convertDateToString(book.getPublicationDate()));
+        bookDTO.setPagesNumber(book.getPagesNumber());
+        bookDTO.setCategory(book.getCategory().getIde());
+        return bookDTO;
+
     }
 
     public CategoryResponse mapperToDTO(Category category) {
@@ -64,14 +80,11 @@ public class Mapper {
         bookCurrent.setTitle(bookDTO.getTitle());
         bookCurrent.setIsbn(bookDTO.getIsbn());
         bookCurrent.setPagesNumber(bookDTO.getPagesNumber());
-        if (bookDTO.getDescription() != null) {
-            bookCurrent.setDescription(bookDTO.getDescription());
-        }
+        bookCurrent.setDescription(bookDTO.getDescription());
 
         if (bookDTO.getPhoto() != null) {
             bookCurrent.setPhoto(bookDTO.getPhoto());
         }
-
         if (bookDTO.getPublicationDate() != null) {
             try {
                 bookCurrent.setPublicationDate(UtilFunction.convertStringToDate(bookDTO.getPublicationDate()));
@@ -105,9 +118,23 @@ public class Mapper {
     }
 
     public List<UserResponse> mapperToDTO(List<User> user) {
-
-        return  user.stream()
+        return user.stream()
                 .map(this::mapperToDTO).collect(Collectors.toList());
+    }
+
+    public List<CategoryBookResponse> mapperFetchToDTO(List<Category> categories) {
+        List<CategoryBookResponse> categoryBookRes = new ArrayList<>();
+        categories.forEach(item -> {
+
+            CategoryBookResponse cateResp = new CategoryBookResponse();
+
+            cateResp.setIde(item.getIde());
+            cateResp.setDescription(item.getDescription());
+            cateResp.setName(item.getName());
+            cateResp.setNumberBooks(item.getBooks().size());
+            categoryBookRes.add(cateResp);
+        });
+        return categoryBookRes;
 
     }
 

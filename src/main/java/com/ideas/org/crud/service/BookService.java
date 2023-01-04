@@ -11,6 +11,8 @@ public interface BookService {
 
     List<BookResponse> findAll();
 
+    BookDTO findByIde(Integer ide);
+
     List<BookResponse> findAllByCategory(Integer ide);
 
     void delete(Integer ide);

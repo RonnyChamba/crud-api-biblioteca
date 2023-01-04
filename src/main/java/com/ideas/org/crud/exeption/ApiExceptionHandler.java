@@ -2,6 +2,7 @@ package com.ideas.org.crud.exeption;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -27,11 +28,12 @@ public class ApiExceptionHandler {
     // para que reconosca
     // agregar esto cunaod aggre secur   AuthenticationException.class
     @ExceptionHandler({UnauthorizedException.class,
-            AuthenticationException.class
+            AuthenticationException.class,
+            BadCredentialsException.class
           })
     @ResponseBody
-    public void unauthorizedRequest() {
-        // Empty. Nothing to do
+    public ErrorMessage unauthorizedRequest(Exception e) {
+        return new ErrorMessage(e, HttpStatus.UNAUTHORIZED.value());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

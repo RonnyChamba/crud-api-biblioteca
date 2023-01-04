@@ -3,6 +3,7 @@ package com.ideas.org.crud.controller;
 import com.ideas.org.crud.dto.UserDTO;
 import com.ideas.org.crud.dto.UserResponse;
 import com.ideas.org.crud.service.UserService;
+import com.ideas.org.crud.util.UtilFunction;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,20 +20,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1")
 @AllArgsConstructor
-@CrossOrigin("*")
+@CrossOrigin(origins = UtilFunction.CROSS_ORIGIN)
 public class UserController {
 
     private static final Logger LOGGER = LogManager.getLogger(UserController.class);
 
     private UserService userService;
-
-    @PostMapping("/users")
-    public ResponseEntity<UserResponse> save(@Valid @RequestBody UserDTO userDTO) {
-
-        LOGGER.debug(String.format("User to save: %s", userDTO));
-        UserResponse response = userService.save(userDTO);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
 
     @PreAuthorize(value = "hasRole('ROLE_ADMIN')")
     @GetMapping("/users")

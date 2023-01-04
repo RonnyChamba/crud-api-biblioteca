@@ -1,8 +1,10 @@
 package com.ideas.org.crud.controller;
 
+import com.ideas.org.crud.dto.CategoryBookResponse;
 import com.ideas.org.crud.dto.CategoryDTO;
 import com.ideas.org.crud.dto.CategoryResponse;
 import com.ideas.org.crud.service.CategoryService;
+import com.ideas.org.crud.util.UtilFunction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -18,7 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
-@CrossOrigin("*")
+@CrossOrigin(origins = UtilFunction.CROSS_ORIGIN)
 public class CategoryController {
 
     private static final Logger LOGGER = LogManager.getLogger(CategoryController.class);
@@ -47,6 +49,24 @@ public class CategoryController {
         mapData.put("data", categories);
         mapData.put("size", categories.size());
 
+        return ResponseEntity.ok(mapData);
+    }
+    @GetMapping("/categories/{ide}")
+    public ResponseEntity<CategoryDTO> findByIde(@PathVariable Integer ide) {
+
+
+        CategoryDTO categoryDTO = categoryService.findByIde(ide);
+        return ResponseEntity.ok(categoryDTO);
+    }
+
+    @GetMapping("/categories/books")
+    public ResponseEntity<Map<String, Object>> findFetchBookAll() {
+
+        List<CategoryBookResponse> categories = categoryService.findFetchBooksAll();
+
+        Map<String, Object> mapData = new HashMap<>();
+        mapData.put("data", categories);
+        mapData.put("size", categories.size());
         return ResponseEntity.ok(mapData);
     }
 

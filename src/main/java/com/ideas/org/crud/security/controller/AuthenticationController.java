@@ -1,49 +1,40 @@
 package com.ideas.org.crud.security.controller;
 
 
+import com.ideas.org.crud.controller.UserController;
+import com.ideas.org.crud.dto.UserDTO;
+import com.ideas.org.crud.dto.UserResponse;
 import com.ideas.org.crud.security.jwt.JwtUtils;
 import com.ideas.org.crud.security.dto.AuthUser;
 import com.ideas.org.crud.security.dto.JwtDTO;
 import com.ideas.org.crud.service.UserService;
+import com.ideas.org.crud.util.UtilFunction;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @AllArgsConstructor
+@CrossOrigin(origins = UtilFunction.CROSS_ORIGIN)
 public class AuthenticationController {
-//
-//    private final AuthenticationManager authenticationManager;
-//    private final UserDetailsService userDetailsService;
-//    private final JwtUtils jwtUtils;
-
     private final UserService userService;
 
+    private static final Logger LOGGER = LogManager.getLogger(AuthenticationController.class);
+    @PostMapping("/users")
+    public ResponseEntity<UserResponse> save(@Valid @RequestBody UserDTO userDTO) {
+
+        LOGGER.debug(String.format("User to save: %s", userDTO));
+        UserResponse response = userService.save(userDTO);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
     @PostMapping("/login")
     public ResponseEntity<?> authLogin(@Valid @RequestBody AuthUser authUser) {
-
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(authUser.getUsername(), authUser.getPassword())
-//        );
-//
-//        final UserDetails user = userDetailsService.loadUserByUsername(authUser.getUsername());
-//        if (user != null) {
-//
-//            JwtDTO jwtDTO = new JwtDTO();
-//            jwtDTO.setToken(jwtUtils.generateToken(user));
-//            return ResponseEntity.ok(jwtDTO);
-//        }
-//        return ResponseEntity.status(400).body("");
 
         JwtDTO jwtDTO = userService.login(authUser);
         return ResponseEntity.ok(jwtDTO);

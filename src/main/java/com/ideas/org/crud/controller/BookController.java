@@ -3,6 +3,7 @@ package com.ideas.org.crud.controller;
 import com.ideas.org.crud.dto.BookDTO;
 import com.ideas.org.crud.dto.BookResponse;
 import com.ideas.org.crud.service.BookService;
+import com.ideas.org.crud.util.UtilFunction;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,10 +20,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1")
 @AllArgsConstructor
-@CrossOrigin("*")
+@CrossOrigin(origins = UtilFunction.CROSS_ORIGIN)
 public class BookController {
 
-    private static final Logger LOGGER = LogManager.getLogger(CategoryController.class);
+    private static final Logger LOGGER = LogManager.getLogger(BookController.class);
 
     private BookService bookService;
 
@@ -35,6 +36,12 @@ public class BookController {
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
 
+    }
+
+    @GetMapping("/books/{ide}")
+    public ResponseEntity<BookDTO> findByIde(@PathVariable Integer ide) {
+        BookDTO bookDTO = bookService.findByIde(ide);
+        return ResponseEntity.ok(bookDTO);
     }
 
     @GetMapping("/books")
